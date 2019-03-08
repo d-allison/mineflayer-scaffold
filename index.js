@@ -97,7 +97,6 @@ function init(mineflayer) {
     vec3( 0,  0, -1),
     vec3( 0,  0,  1),
   ];
-  //materials = require('minecraft-data')(require('mineflayer')).materials;
 
   return inject;
 }
@@ -247,12 +246,16 @@ function inject(bot) {
         if (nextGroundBlock.type === 0) {
           if (! placeBlock(groundBlock, vec3(0, -1, 0))) return;
         } else {
-          breakBlock(nextGroundBlock, "decreaseY");
+                  setTimeout(function() {
+          breakBlock(groundBlock, 'decreaseY');
+      }, 500);
           return;
         }
       }
       // dig the block below
-      breakBlock(groundBlock, 'decreaseY');
+        setTimeout(function() {
+          breakBlock(groundBlock, 'decreaseY');
+      }, 100);
     },
     increaseZ: function () {
       if (Math.floor(bot.entity.position.z) >= targetPoint.z) return changeState('walk');
@@ -372,6 +375,8 @@ function inject(bot) {
     for (var i = 0; i < dangerBlockAndVecs.length; ++i) {
       if (! placeBlock(targetBlock, dangerBlockAndVecs[i].sideVec)) return;
     }
+    setTimeout(function(){
+
     var aboveBlock = bot.blockAt(targetBlock.position.offset(0, 1, 0));
     var fallDanger = !!fallingBlockTypes[aboveBlock.type];
 
@@ -379,7 +384,7 @@ function inject(bot) {
       changeState('off', 'danger', targetBlock);
       return;
     }
-    if (! equipToolToBreak(targetBlock)) return;
+    if (! equipToolToBreak(targetBlock)) return; // ERROR
     var done = false;
     bot.dig(targetBlock, function(err) {
       if (done) return;
@@ -399,6 +404,7 @@ function inject(bot) {
       if (done) return;
       done = true;
     });
+        }, 100);
   }
   function canHarvest(block) {
     var okTools = block.harvestTools;
